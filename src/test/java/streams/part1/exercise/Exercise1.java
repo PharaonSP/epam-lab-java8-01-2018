@@ -46,6 +46,7 @@ public class Exercise1 {
 //                                                            employee.getJobHistory().stream()
 //                                                                    .limit(1)
 //                                                                    .allMatch(h -> "epam".equalsIgnoreCase(h.getEmployer())))
+
                                                 // вариант преподавателя
                                                 .filter(employee -> "epam".equalsIgnoreCase(employee.getJobHistory().get(0).getEmployer()))
                                                 .map(Employee::getPerson)
@@ -86,8 +87,15 @@ public class Exercise1 {
         // TODO реализация
         Integer minimalAge = employees.stream()
                                       .map(Employee::getPerson)
-                                      .map(Person::getAge)
-                                      .min(Integer::compare).orElse(null);
+                                      //мой вариант
+                                      // .map(Person::getAge)
+                                      // .min(Integer::compare)
+                                      // .orElse(null);
+
+                                      //Вариант препода
+                                      .mapToInt(Person::getAge)
+                                      .min()
+                                      .orElseThrow(IllegalStateException::new);
 
         assertEquals(21, minimalAge.intValue());
     }
