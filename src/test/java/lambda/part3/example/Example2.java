@@ -43,13 +43,19 @@ public class Example2 {
          * @param condition условие по которому производится отбор.
          */
         public FilterUtil<T> filter(Predicate<T> condition) {
-            List<T> result = new ArrayList<>();
-            source.forEach(value -> {
-                if (condition.test(value)) {
-                    result.add(value);
-                }
-            });
-            return new FilterUtil<>(result);
+            List<T> newSource = new ArrayList<>();
+
+            // var 1
+//            for (T item : source){
+//                if(condition.test(item)){
+//                    newSource.add(item);
+//                }
+//            }
+
+            //var 2
+            source.forEach(i -> {if(condition.test(i)) newSource.add(i);});
+
+            return FilterUtil.from(newSource);
         }
     }
 

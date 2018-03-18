@@ -1,6 +1,9 @@
 package streams.part1.exercise;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
@@ -17,7 +20,12 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация, использовать Collectors.toList()
-        List<Person> personsEverWorkedInEpam = null;
+        List<Person> personsEverWorkedInEpam = employees.stream()
+                                                        .filter(employee ->
+                                                            employee.getJobHistory().stream()
+                                                                    .anyMatch(h -> "epam".equalsIgnoreCase(h.getEmployer())))
+                                                        .map(Employee::getPerson)
+                                                        .collect(Collectors.toList());
 
         List<Person> expected = Arrays.asList(
                 employees.get(0).getPerson(),
@@ -32,7 +40,16 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация, использовать Collectors.toList()
-        List<Person> startedFromEpam = null;
+        List<Person> startedFromEpam = employees.stream()
+                                                // мой вариант
+//                                                .filter(employee ->
+//                                                            employee.getJobHistory().stream()
+//                                                                    .limit(1)
+//                                                                    .allMatch(h -> "epam".equalsIgnoreCase(h.getEmployer())))
+                                                // вариант преподавателя
+                                                .filter(employee -> "epam".equalsIgnoreCase(employee.getJobHistory().get(0).getEmployer()))
+                                                .map(Employee::getPerson)
+                                                .collect(Collectors.toList());
 
         List<Person> expected = Arrays.asList(
                 employees.get(0).getPerson(),
@@ -46,7 +63,12 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация, использовать Collectors.toSet()
-        Set<String> companies = null;
+        Set<String> companies = employees.stream()
+                                         .map(Employee::getJobHistory)
+                                         .flatMap(Collection::stream)
+                                         .map(JobHistoryEntry::getEmployer)
+                                         //.distinct()
+                                         .collect(Collectors.toSet());
 
         Set<String> expected = new HashSet<>();
         expected.add("EPAM");
@@ -62,7 +84,10 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Integer minimalAge = null;
+        Integer minimalAge = employees.stream()
+                                      .map(Employee::getPerson)
+                                      .map(Person::getAge)
+                                      .min(Integer::compare).orElse(null);
 
         assertEquals(21, minimalAge.intValue());
     }

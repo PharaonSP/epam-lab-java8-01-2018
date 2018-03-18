@@ -1,6 +1,8 @@
 package lambda.part3.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
+import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
@@ -37,7 +39,14 @@ public class Exercise2 {
          * @param mapping Функция преобразования элементов.
          */
         public <R> MapHelper<R> map(Function<T, R> mapping) {
-            throw new UnsupportedOperationException();
+           List<R> result = new ArrayList<>();
+
+            for (T item : source){
+                result.add(mapping.apply(item));
+            }
+
+            return new MapHelper<>(result);
+            //throw new UnsupportedOperationException();
         }
 
         /**
@@ -47,7 +56,14 @@ public class Exercise2 {
          * @param flatMapping Функция преобразования элементов.
          */
         public <R> MapHelper<R> flatMap(Function<T, List<R>> flatMapping) {
-            throw new UnsupportedOperationException();
+            List<R> result = new ArrayList<>();
+
+            for (T item : source){
+                result = flatMapping.apply(item);
+            }
+
+            return new MapHelper<>(result);
+            //throw new UnsupportedOperationException();
         }
     }
 
@@ -55,12 +71,16 @@ public class Exercise2 {
     public void mapEmployeesToLengthOfTheirFullNamesUsingMapHelper() {
         List<Employee> employees = Example1.getEmployees();
 
-        List<Integer> lengths = null;
+        List<Integer> lengths = MapHelper.from(employees)
         // TODO                 MapHelper.from(employees)
         // TODO                          .map(Employee -> Person)
+        .map(Employee::getPerson)
         // TODO                          .map(Person -> String(full name))
+        .map(Person::getFullName)
         // TODO                          .map(String -> Integer(length of string))
+        .map(String::length)
         // TODO                          .getMapped();
+        .getMapped();
         assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
     }
 
@@ -68,13 +88,25 @@ public class Exercise2 {
     public void mapEmployeesToCodesOfLetterTheirPositionsUsingMapHelper() {
         List<Employee> employees = Example1.getEmployees();
 
-        List<Integer> codes = null;
+        List<Integer> codes =
         // TODO               MapHelper.from(employees)
+        MapHelper.from(employees)
         // TODO                        .flatMap(Employee -> JobHistoryEntry)
+        .flatMap(Employee::getJobHistory)
         // TODO                        .map(JobHistoryEntry -> String(position))
+        .map(JobHistoryEntry::getPosition)
         // TODO                        .flatMap(String -> Character(letter))
+        .flatMap(s -> {
+            List<Character> chars = new ArrayList<>();
+            for(Character ch : s.toCharArray()){
+                chars.add(ch);
+            }
+            return chars;
+        })
         // TODO                        .map(Character -> Integer(code letter)
+        .map(Integer::valueOf)
         // TODO                        .getMapped();
+        .getMapped();
         assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "tester", "QA", "QA", "QA", "dev"), codes);
     }
 

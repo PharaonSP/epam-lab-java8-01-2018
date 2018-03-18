@@ -26,9 +26,9 @@ public class Example3 {
         List<Employee> employees = Example1.getEmployees();
 
         String[] ivansLastNames = employees.stream()
-                                           .map(Employee::getPerson)
-                                           .filter(person -> "Иван".equals(person.getFirstName()))
-                                           .map(Person::getLastName)
+                                           .filter(e -> e.getPerson().getFirstName().equals("Иван"))
+                                           .map(employee -> employee.getPerson().getLastName())
+                                           .distinct()
                                            .toArray(String[]::new);
 
         assertArrayEquals(new String[]{"Мельников", "Александров"}, ivansLastNames);

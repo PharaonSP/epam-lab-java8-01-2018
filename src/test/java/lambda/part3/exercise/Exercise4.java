@@ -14,18 +14,25 @@ import static org.junit.Assert.assertEquals;
 public class Exercise4 {
 
     private static class LazyCollectionHelper<T, R> {
+        private List<T> source;
+        private Function<T,R> function;
+
+        private LazyCollectionHelper(List<T> list, Function<T,R> function){
+            this.source = list;
+            this.function = function;
+        }
 
         public static <T> LazyCollectionHelper<T, T> from(List<T> list) {
-            throw new UnsupportedOperationException();
+            return new LazyCollectionHelper<>(list, Function.identity());
         }
+
 
         public <U> LazyCollectionHelper<T, U> flatMap(Function<R, List<U>> flatMapping) {
             throw new UnsupportedOperationException();
         }
 
         public <U> LazyCollectionHelper<T, U> map(Function<R, U> flatMapping) {
-            throw new UnsupportedOperationException();
-
+            return new LazyCollectionHelper<>(source, function.andThen(flatMapping));
         }
 
         public List<R> force() {
